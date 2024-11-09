@@ -11,9 +11,11 @@ use Admin\Models\Orders_model;
 use Admin\Models\Staffs_model;
 use Admin\Models\Statuses_model;
 use Carbon\Carbon;
+use DateTime;
 use Igniter\Flame\Exception\ApplicationException;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Request;
+use Illuminate\Http\RedirectResponse;
 use Thoughtco\KitchenDisplay\Models\Views as KitchenViews;
 
 /**
@@ -277,6 +279,46 @@ class Summary extends \Admin\Classes\AdminController
 
 		}
 
+    }
+
+	public function contact(): RedirectResponse
+    {
+        $orderId = Request::get('orderId', -1);
+        $eta = Request::get('eta', '45');
+
+        // get newest order
+        /** @var Orders_model $order */
+        $order = Orders_model::where('order_id', $orderId)->first();
+        $order->updateOrderStatus(
+            $order->status_id,
+            [
+                'comment' => sprintf(lang('lang:thoughtco.kitchendisplay::default.eta'), $eta),
+                'notify' => false,
+            ]
+        );
+        
+        // check if ETA is valid 
+        $etaDateTime = (new DateTime())->modify('+' . $eta . ' minutes');
+        $orderDateTime = DateTime::createFromFormat('Y-m-d H:i:s', $order->order_date->format('Y-m-d') . ' ' . $order->order_time);
+        // flash()->info($orderDateTime->format('Y-m-d H:i:s'));
+        if (! $order->order_time_is_asap && $etaDateTime < $orderDateTime) 
+        {
+            flash()->warning(lang('lang:thoughtco.kitchendisplay::default.eta_too_low'))->now();
+            return back();
+        }
+
+        // send mail to customer
+        $mailView = 'admin::_mail.order_update	';
+        $order->mailSend($mailView, 'customer');
+
+        // flash success message in kitchen display
+
+        $order->order_date = $etaDateTime->format('Y-m-d');
+        $order->order_time = $etaDateTime->format('H:i');
+        $order->save();
+        flash()->success(sprintf(lang('lang:thoughtco.kitchendisplay::default.eta_success'), $eta))->now();
+
+        return back();
     }
 
 }

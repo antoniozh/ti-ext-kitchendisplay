@@ -52,6 +52,7 @@ return [
     'label_card_status' => 'Show status',
     'label_card_items' => 'Show menu items',
     'label_card_assign' => 'Show assign',
+    'label_card_eta' => 'Show ETA combo box',
     'label_card_print' => 'Show print',
 
     'option_blank' => 'Blank',
@@ -81,4 +82,8 @@ return [
     'value_delivery' => 'Delivery only',
     'value_collection' => 'Collection only',
 
+    'eta' => 'The estimated time of arrival for your order is %d minutes',
+    'eta_too_low' => 'The ETA is earlier than the time requested. Did you take the reservation time into account?',
+    'eta_success' => 'Successfully set ETA to %d minutes',
+    'btn_eta' => 'Send ETA'
 ];

@@ -326,6 +326,12 @@ $config = [
 		            'type' => 'switch',
 					'default' => FALSE,
 	            ],
+				'display[eta]' => [
+					'tab' => 'lang:thoughtco.kitchendisplay::default.tab_cards',
+					'label' => 'thoughtco.kitchendisplay::default.label_card_eta',
+					'type' => 'switch',
+					'default' => FALSE,
+				]
 			]
         ]
     ],

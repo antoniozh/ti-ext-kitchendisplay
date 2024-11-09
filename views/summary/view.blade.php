@@ -54,7 +54,19 @@
 						@if($viewSettings->display['card_status'])
 							<h6 class="label label-default mt-2" style="background-color:{!! $order->status_color !!}!important">{{ $order->status_name }}</h6>
 						@endif
-
+						@if(array_key_exists('eta', $viewSettings->display) && $viewSettings->display['eta'])
+                            <form action="{{ admin_url('thoughtco/kitchendisplay/summary/contact') }}" method="GET">
+                                <input type="hidden" name="orderId" value="{{ $order->id }}" />
+                                <select name="eta" id="eta">
+                                    <option value="15">15 min</option>
+                                    <option value="30">30 min</option>
+                                    <option value="45">45 min</option>
+                                    <option value="60">60 min</option>
+                                    <option value="90">90 min</option>
+                                </select>
+                                <button type="submit" class="btn btn-primary">@lang('thoughtco.kitchendisplay::default.btn_eta')</button>
+                            </form>
+						@endif
 						@if($viewSettings->display['card_items'])
 						<div>
 							@foreach ($order->dishes as $dish)
@@ -67,7 +79,7 @@
 							@endif
 						</div>
 						@endif
-						
+
 						@if($order->print != '')
 						<div class="mt-4">
 							@if (count($order->print) > 1)
